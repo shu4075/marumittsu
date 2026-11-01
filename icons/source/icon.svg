@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb8d0"/>
+      <stop offset="0.5" stop-color="#c8b6ff"/>
+      <stop offset="1" stop-color="#8fd3ff"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1b8"/>
+      <stop offset="0.5" stop-color="#f2c14e"/>
+      <stop offset="1" stop-color="#c98a1b"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <path id="spark" d="M0,-1 C0.12,-0.12 0.12,-0.12 1,0 C0.12,0.12 0.12,0.12 0,1 C-0.12,0.12 -0.12,0.12 -1,0 C-0.12,-0.12 -0.12,-0.12 0,-1Z"/>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <!-- treasure map -->
+  <g transform="rotate(-6 256 270)">
+    <path d="M110 160 L200 140 L300 165 L400 145 L400 380 L300 400 L200 375 L110 395 Z" fill="#fff8e7" stroke="#b98a4a" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M200 140 L200 375 M300 165 L300 400" stroke="#e7d3a8" stroke-width="4"/>
+    <!-- dotted path -->
+    <path d="M140 350 C 180 300, 230 340, 250 290 S 320 230, 352 210" fill="none" stroke="#d8443a" stroke-width="7" stroke-linecap="round" stroke-dasharray="3 16"/>
+    <!-- three little hills / trees -->
+    <circle cx="160" cy="215" r="18" fill="#9bd39b"/><circle cx="182" cy="232" r="13" fill="#7bc47f"/>
+    <path d="M330 340 q 20 -30 40 0" fill="#9bc7e8"/>
+  </g>
+  <!-- goal star -->
+  <use href="#spark" transform="translate(356 200) scale(52)" fill="url(#gold)" filter="url(#glow)"/>
+  <g fill="#fff">
+    <use href="#spark" transform="translate(110 100) scale(16)"/>
+    <use href="#spark" transform="translate(420 300) scale(11)"/>
+    <use href="#spark" transform="translate(150 440) scale(10)"/>
+  </g>
+</svg>
