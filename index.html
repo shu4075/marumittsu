@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>まるみっつ探検帳（非公式）</title>
+  <meta name="description" content="ランドとシーにかくれた「まるみっつ」のマークを探して、写真でスタンプを集める非公式ファンアプリ">
+
+  <!-- ホーム画面に追加したときの名前・アイコン・色（PWA） -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f4efe3">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="まるみっつ">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- 見出しに使う丸ゴシック（Google Fonts）。読み込めないときは端末の文字になる -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!--
+    まるみっつ探検帳
+    パークのあちこちにかくれている「丸が3つ」のマークを探すための、非公式のファンアプリ。
+    名前・アイコン・地図には、キャラクターや公式の素材を使っていない（地図は OpenStreetMap）。
+    画面の作り：地図を画面いっぱいに出して、下から引き出し（スタンプ帳と一覧）を出す
+  -->
+
+  <div id="map"></div>
+
+  <!-- 上の操作 -->
+  <div class="top-controls">
+    <div class="top-row">
+      <div class="segmented" role="group" aria-label="パーク">
+        <button id="park-land" aria-pressed="true">ランド</button>
+        <button id="park-sea" aria-pressed="false">シー</button>
+      </div>
+      <div id="compass" class="compass" aria-label="北の方向"><span>N</span></div>
+      <button id="btn-menu" class="round-btn" aria-label="メニュー" aria-haspopup="dialog">
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
+    </div>
+    <!-- 地図に出すマーク：全部／まだ見つけていないもの／見つけたもの -->
+    <div id="filter" class="chips" role="group" aria-label="地図に出すマーク">
+      <button data-filter="all" aria-pressed="true">すべて</button>
+      <button data-filter="todo" aria-pressed="false">まだ</button>
+      <button data-filter="done" aria-pressed="false">見つけた</button>
+    </div>
+  </div>
+
+  <!-- 右下：現在地に地図を戻すボタン -->
+  <button id="btn-locate" class="round-btn locate" aria-label="現在地を表示">
+    <span class="locate-icon" aria-hidden="true"></span>
+  </button>
+
+  <!-- 下の引き出し（ボトムシート）。上下にドラッグすると大きさが変わる -->
+  <section id="sheet" class="sheet" data-state="peek" aria-label="スタンプ帳">
+    <button id="sheet-handle" class="sheet-handle" aria-label="引き出しを広げる"><span></span></button>
+
+    <div class="sheet-peek">
+      <div class="peek-row">
+        <p id="status" class="status">地図の番号をタップすると、ヒントが読めます</p>
+        <p id="peek-count" class="peek-count"></p>
+      </div>
+      <div class="peek-actions">
+        <!-- 最初の1回だけここに出し、そのあとはメニューに入れる -->
+        <button id="btn-gps" class="btn primary hidden" aria-pressed="false">GPSで探しに行く</button>
+      </div>
+    </div>
+
+    <div id="sheet-body" class="sheet-body">
+      <!-- スタンプ帳と一覧 -->
+      <div id="list" class="list">
+        <div id="stamp-card" class="stamp-card"></div>
+        <div class="list-head">
+          <h2 id="list-title" class="list-title"></h2>
+          <div id="sort" class="sort-toggle" role="group" aria-label="並べ方">
+            <button data-sort="number" aria-pressed="true">番号順</button>
+            <button data-sort="near" aria-pressed="false">近い順</button>
+          </div>
+        </div>
+        <p id="list-note" class="list-note"></p>
+        <ul id="list-items" class="list-items"></ul>
+      </div>
+
+      <!-- マークのカード -->
+      <article id="card" class="card hidden" aria-live="polite">
+        <button id="card-close" class="back-btn">‹ 一覧にもどる</button>
+        <div class="badges">
+          <span id="card-area" class="badge"></span>
+          <span id="card-verified" class="badge sub"></span>
+        </div>
+        <h2 id="card-title"></h2>
+        <p id="card-label" class="card-label">ヒント</p>
+        <p id="card-body"></p>
+
+        <div id="card-actions" class="card-actions">
+          <button id="card-photo" class="btn primary">見つけたら写真を撮る</button>
+          <button id="card-peek" class="btn sub-btn">答えだけ見る（スタンプはつきません）</button>
+        </div>
+        <input id="photo-input" type="file" accept="image/*" capture="environment" hidden>
+
+        <!-- 撮った写真と正解を並べる -->
+        <div id="compare" class="compare hidden">
+          <div class="compare-pair">
+            <figure class="photo">
+              <img id="compare-mine" alt="撮った写真">
+              <figcaption>撮った写真</figcaption>
+            </figure>
+            <figure id="compare-answer-figure" class="photo">
+              <img id="compare-answer" alt="正解の写真">
+              <figcaption>正解</figcaption>
+            </figure>
+          </div>
+          <p id="compare-answer-text" class="compare-answer-text hidden"></p>
+          <p class="compare-question">撮った写真に、マークが写っていますか？</p>
+          <div class="card-actions">
+            <button id="compare-yes" class="btn primary">写っている！スタンプを押す</button>
+            <button id="compare-retry" class="btn">撮り直す</button>
+          </div>
+        </div>
+
+        <!-- 見つけたあと：自分が撮った写真 -->
+        <figure id="card-myphoto" class="photo hidden">
+          <img id="card-myphoto-img" alt="撮った写真">
+          <figcaption id="card-myphoto-caption">撮った写真</figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <!-- メニュー（右上の ≡ で開く） -->
+  <div id="menu" class="menu-backdrop hidden">
+    <section class="menu" role="dialog" aria-modal="true" aria-labelledby="menu-title">
+      <div class="menu-head">
+        <h2 id="menu-title">まるみっつ探検帳</h2>
+        <button id="menu-close" class="close" aria-label="閉じる">×</button>
+      </div>
+
+      <div class="menu-tools">
+        <button id="btn-gps-menu" class="btn primary" aria-pressed="false">GPSで探しに行く</button>
+        <button id="btn-screen" class="btn hidden" aria-pressed="false">画面を消さない：OFF</button>
+      </div>
+
+      <h3 class="menu-sub">あそびかた</h3>
+      <ol class="howto">
+        <li>地図の番号をタップすると、そのマークのヒントが読めます。</li>
+        <li>見つけたら「写真を撮る」。写真に写っていたら、スタンプが押されます。</li>
+        <li>近くに来ると、お知らせが届きます（アプリを開いているあいだだけ）。</li>
+      </ol>
+
+      <h3 class="menu-sub">このアプリについて</h3>
+      <p class="about">
+        パークのあちこちにかくれている「丸が3つ」のマーク（いわゆる“かくれキャラ”のひとつ）を探して楽しむ、個人のファンが作った<strong>非公式</strong>アプリです。
+        パークを運営する会社やキャラクターの権利を持つ会社とは関係ありません。
+      </p>
+      <p class="about">
+        ヒントと答えは、いろいろな情報をもとに自分の言葉で書いたもので、答えの最後に参考にしたサイトを書いています。
+        改装などでなくなっていることもあります。「未確認」はまだ現地で確かめていないものです。
+      </p>
+      <p class="about">地図：© OpenStreetMap contributors</p>
+      <p class="about">撮った写真と記録は、このスマホの中だけに保存されます。</p>
+
+      <h3 class="menu-sub">確認用</h3>
+      <div class="menu-tools">
+        <button id="btn-demo" class="btn">デモ（地図タップで移動）</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- アプリ内カメラ（画面いっぱいに出す） -->
+  <section id="camera" class="camera hidden" aria-label="カメラ">
+    <video id="camera-video" playsinline muted></video>
+    <p class="camera-hint">マークが写るように撮ってください</p>
+    <div class="camera-bar">
+      <button id="camera-cancel" class="camera-text-btn">やめる</button>
+      <button id="camera-shutter" class="shutter" aria-label="撮影"></button>
+      <button id="camera-album" class="camera-text-btn">別の方法</button>
+    </div>
+  </section>
+
+  <!-- 読み込む順番が大事：Leaflet → マークのデータ → 動きのプログラム -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"></script>
+  <script src="marks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
