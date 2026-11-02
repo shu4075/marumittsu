@@ -347,10 +347,21 @@ function renderList() {
 }
 
 // スタンプ帳：番号の丸が並び、見つけたものにスタンプが押される。丸をタップするとカードが開く
+// ふだんは閉じておき（一覧をすぐ見られるように）、見出しをタップすると開く。開いたかどうかは覚えておく
+let stampsOpen = loadSetting("stampsOpen") === "yes";
+
 function renderStampCard(items, got) {
   const box = document.getElementById("stamp-card");
   box.innerHTML = "";
-  box.appendChild(makeEl("p", "stamp-title", PARK_LABEL[currentPark] + "のスタンプ帳　" + got + " / " + items.length));
+  const head = makeEl("button", "stamp-toggle", PARK_LABEL[currentPark] + "のスタンプ帳　" + got + " / " + items.length);
+  head.setAttribute("aria-expanded", stampsOpen ? "true" : "false");
+  head.addEventListener("click", function () {
+    stampsOpen = !stampsOpen;
+    saveSetting("stampsOpen", stampsOpen ? "yes" : "no");
+    renderList();
+  });
+  box.appendChild(head);
+  if (!stampsOpen) return;
   const grid = makeEl("div", "stamp-grid");
   items.slice().sort(function (a, b) { return a.m.num - b.m.num; }).forEach(function (it) {
     const isGot = found.has(it.m.id);
