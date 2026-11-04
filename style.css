@@ -1,5 +1,5 @@
 /* =====================================================
-   style.css … まるみっつ探検帳の見た目
+   style.css … まるみっつーの見た目
    テーマは「探検家の手帳」：クラフト紙、深い緑のインク、
    丸ゴシックの見出し、朱色のスタンプ
    画面の作りは地図アプリでよく使われる形：
@@ -537,7 +537,7 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
 }
 .shutter:active { transform: scale(0.94); }
 
-/* ===== まるみっつ探検帳だけの部品 ===== */
+/* ===== まるみっつーだけの部品 ===== */
 /* 引き出しの上：今の状態と、見つけた数 */
 .peek-row { display: flex; gap: 10px; align-items: flex-start; }
 .peek-row .status { flex: 1; }
