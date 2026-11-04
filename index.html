@@ -166,9 +166,48 @@
       <p class="about">地図：© OpenStreetMap contributors</p>
       <p class="about">撮った写真と記録は、このスマホの中だけに保存されます。</p>
 
+      <div class="menu-links">
+        <button id="btn-intro" class="link-btn">使い方をもう一度見る</button>
+        <a href="terms.html">利用規約・ご注意</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+      </div>
+
+      <h3 class="menu-sub">記録</h3>
+      <div class="menu-tools">
+        <button id="btn-reset" class="btn danger">記録をすべて消す</button>
+      </div>
+
       <h3 class="menu-sub">確認用</h3>
       <div class="menu-tools">
         <button id="btn-demo" class="btn">デモ（地図タップで移動）</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 初めて開いたときの使い方（3枚。メニューからもう一度見られる） -->
+  <div id="intro" class="intro-backdrop hidden">
+    <section class="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+      <div class="intro-pages">
+        <div class="intro-page" data-page="0">
+          <p class="intro-emoji" aria-hidden="true">🗺️</p>
+          <h2 id="intro-title">まるみっつーへようこそ</h2>
+          <p>パークのあちこちに、「丸が3つ」のマークがかくれています。地図の番号をタップすると、さがすヒントが読めます。</p>
+        </div>
+        <div class="intro-page hidden" data-page="1">
+          <p class="intro-emoji" aria-hidden="true">📷</p>
+          <h2>見つけたら写真を撮ろう</h2>
+          <p>マークが写るように撮って、「写っている！」を押すとスタンプがたまります。写真と記録は、このスマホの中だけに残ります。</p>
+        </div>
+        <div class="intro-page hidden" data-page="2">
+          <p class="intro-emoji" aria-hidden="true">🚶</p>
+          <h2>まわりに気をつけて</h2>
+          <p>歩きながら画面を見ないでください。立入禁止の場所には入らず、パークのルールを守って楽しんでください。これは個人のファンが作った非公式アプリです。</p>
+        </div>
+      </div>
+      <div class="intro-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="intro-actions">
+        <button id="intro-skip" class="btn sub-btn">とばす</button>
+        <button id="intro-next" class="btn primary">つぎへ</button>
       </div>
     </section>
   </div>

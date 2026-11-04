@@ -1,0 +1,34 @@
+/* =====================================================
+   doc.css … プライバシーポリシー・利用規約など、文章のページの見た目
+   （アプリ本体の style.css とは別。こちらは普通にスクロールするページ）
+   ===================================================== */
+:root {
+  --paper: #f4efe3;
+  --paper-2: #fbf8f0;
+  --ink: #23302a;
+  --ink-soft: #5e6b63;
+  --rule: #cfc6b0;
+  --leaf: #2f5d50;
+  --serif: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.85 var(--sans);
+}
+main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: calc(20px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+}
+.back { display: inline-block; margin-bottom: 12px; color: var(--leaf); font-weight: 700; text-decoration: none; }
+h1 { margin: 0 0 4px; font: 700 24px/1.4 var(--serif); }
+.updated { margin: 0 0 20px; color: var(--ink-soft); font-size: 13px; }
+h2 { margin: 28px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--rule); font: 700 18px/1.4 var(--serif); }
+p, li { margin: 0 0 10px; }
+ul, ol { padding-left: 1.3em; margin: 0 0 10px; }
+.box { padding: 12px 14px; border: 1.5px solid var(--leaf); border-radius: 10px; background: var(--paper-2); }
+a { color: var(--leaf); }

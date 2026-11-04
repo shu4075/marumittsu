@@ -9,7 +9,7 @@
 
 
 // ファイルを大きく変えたら、この番号を上げる（古いキャッシュが消える）
-const CACHE_NAME = "marumittsu-v4";
+const CACHE_NAME = "marumittsu-v5";
 
 // オフラインでも使いたいファイルの一覧
 const APP_FILES = [
@@ -19,6 +19,9 @@ const APP_FILES = [
   "marks.js",
   "app.js",
   "manifest.webmanifest",
+  "privacy.html",
+  "terms.html",
+  "doc.css",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/apple-touch-icon.png",

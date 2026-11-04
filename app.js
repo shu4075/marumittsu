@@ -760,11 +760,62 @@ if ("wakeLock" in navigator) {
 }
 
 
+// ---------- 初めて開いたときの使い方 ----------
+// 3枚の説明を順に見せる。一度見たら覚えておき、次からは出さない（メニューから見直せる）
+const introEl = document.getElementById("intro");
+const introNext = document.getElementById("intro-next");
+let introPage = 0;
+
+function showIntroPage(n) {
+  introPage = n;
+  document.querySelectorAll(".intro-page").forEach(function (p) {
+    p.classList.toggle("hidden", Number(p.dataset.page) !== n);
+  });
+  document.querySelectorAll(".intro-dots span").forEach(function (d, i) {
+    d.classList.toggle("on", i === n);
+  });
+  introNext.textContent = n === 2 ? "はじめる" : "つぎへ";
+}
+function openIntro() {
+  showIntroPage(0);
+  introEl.classList.remove("hidden");
+}
+function closeIntro() {
+  introEl.classList.add("hidden");
+  saveSetting("introSeen", "yes");
+}
+introNext.addEventListener("click", function () {
+  if (introPage < 2) showIntroPage(introPage + 1); else closeIntro();
+});
+document.getElementById("intro-skip").addEventListener("click", closeIntro);
+document.getElementById("btn-intro").addEventListener("click", function () {
+  closeMenu();
+  openIntro();
+});
+
+
+// ---------- 記録をすべて消す ----------
+// スタンプの記録（localStorage）と、撮った写真（IndexedDB）を消す。消す前に必ず確認する
+document.getElementById("btn-reset").addEventListener("click", function () {
+  if (!window.confirm("スタンプの記録と撮った写真を、すべて消します。元に戻せません。よろしいですか？")) return;
+  found.clear();
+  saveFound();
+  try { indexedDB.deleteDatabase("marumittsu"); } catch (e) { /* 消せなくても続行 */ }
+  MARKS.forEach(function (m) { pins[m.id].setIcon(pinIcon(m)); });
+  inside.clear();
+  applyFilter();
+  closeCard();
+  closeMenu();
+  setStatus("記録をすべて消しました");
+});
+
+
 // ---------- 開いたときの準備 ----------
 btnGps.classList.toggle("hidden", loadSetting("gpsIntroDone") === "yes");
 showPark(currentPark, true);
 setMode(loadSetting("lastMode") === "gps" ? "gps" : "demo");
 fitPeek();
+if (loadSetting("introSeen") !== "yes") openIntro();
 
 
 // ---------- オフライン対応（Service Worker の登録） ----------

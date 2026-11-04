@@ -602,3 +602,47 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
 .stamp-toggle::after { content: "▾"; color: var(--ink-soft); transition: transform 0.2s; }
 .stamp-toggle[aria-expanded="false"]::after { transform: rotate(-90deg); }
 .stamp-card .stamp-grid { margin-bottom: 6px; }
+
+/* メニューのリンク（使い方・規約・プライバシー） */
+.menu-links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 14px 0 0; font-size: 14px; }
+.menu-links a, .link-btn { color: var(--leaf); font-weight: 700; text-decoration: underline; }
+.link-btn { padding: 0; border: 0; background: transparent; font-size: 14px; }
+/* 取り消せない操作のボタン */
+.btn.danger { border-color: var(--accent); color: var(--accent); }
+
+/* 初めて開いたときの使い方 */
+.intro-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(35, 48, 42, 0.45);
+}
+.intro {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px 20px 18px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--ink);
+  border-radius: 16px;
+  text-align: center;
+  animation: fadeIn 0.2s ease-out;
+}
+.intro-emoji { margin: 0; font-size: 44px; line-height: 1.2; }
+.intro h2 { margin: 8px 0 8px; font: 700 20px/1.4 var(--serif); }
+.intro-page p:not(.intro-emoji) { margin: 0; font-size: 15px; line-height: 1.8; text-align: left; }
+.intro-pages { min-height: 220px; }
+.intro-dots { display: flex; justify-content: center; gap: 6px; margin: 14px 0; }
+.intro-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
+.intro-dots span.on { background: var(--leaf); }
+.intro-actions { display: flex; gap: 8px; }
+.intro-actions .btn { flex: 1; }
+
+/* 指で押しやすい大きさにする（小さいボタンを 36〜44px くらいに） */
+.chips button { height: 38px; padding: 0 16px; }
+.sort-toggle button { height: 36px; padding: 0 14px; }
+.stamp-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); }
+.back-btn { padding: 10px 4px; }
+.link-btn, .menu-links a { display: inline-block; padding: 6px 0; }
